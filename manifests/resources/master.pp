@@ -14,12 +14,12 @@ define mesos::resources::master(
   $java_package      = $mesos::java_package,
   $manage_user       = $mesos::manage_user,
   $user              = $mesos::user,
-  $install_master     = $mesos::install_master,
+  $install_master    = $mesos::install_master,
   $masterServiceName = $mesos::masterServiceName,
   $masterLogDir      = $mesos::masterLogDir,
   $masterWorkDir     = $mesos::masterWorkDir,
-  $install_slave      = $mesos::install_slave,
-  $network_isolation  = $mesos::network_isolation,
+  $install_slave     = $mesos::install_slave,
+  $network_isolation = $mesos::network_isolation,
   $slaveServiceName  = $mesos::slaveServiceName,
   $slaveLogDir       = $mesos::slaveLogDir,
   $slaveWorkDir      = $mesos::slaveWorkDir,
@@ -29,7 +29,7 @@ define mesos::resources::master(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall    = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall
 ) {
 
   validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$dockerVersion,$dockerDNS,$mesosConfigParams)

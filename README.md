@@ -99,7 +99,7 @@ class mesos(
   # The jdk package name
   $java_package         = 'java-1.8.0-openjdk',
   # Whether to configure a default mesos master instance
-  $install_master        = false,
+  $install_master       = false,
   # The service name for the default master instance.
   $masterServiceName    = 'mesos-master',
   # The logs directory for the default mesos master instance
@@ -107,9 +107,9 @@ class mesos(
   # The working directory for the default mesos master instance
   $masterWorkDir        = '/var/lib/mesos-master',
   # Whether or not to install a default slave instance
-  $install_slave         = false,
+  $install_slave        = false,
   # Whether to install mesos with network isolation support
-  $network_isolation     = false,
+  $network_isolation    = false,
   # The service name for the default mesos slave instance
   $slaveServiceName     = 'mesos-slave',
   # The log directory for the default mesos slave instances
@@ -131,10 +131,45 @@ class mesos(
   # Docker bind socket
   $dockerSocketBind     = '/var/run/docker.sock',
   # Whether or not to manage the firewall rules - Please note that by default, this module replaces firewalld with iptables
-  $manage_firewall       = false
+  $manage_firewall      = false
 ) {
 ```
 
+* The __mesos::install__ _class_ and the default parameters
+```puppet
+class mesos::install(
+  $ensure            = $mesos::ensure,
+  $url               = $mesos::url,
+  $mvn_url           = $mesos::mvn_url,
+  $libnlUrl          = $mesos::libnlUrl,
+  $libnlSrcDir       = $mesos::libnlSrcDir,
+  $libnlConfigParams = $mesos::libnlConfigParams,
+  $mvn_dir           = $mesos::mvn_dir,
+  $branch            = $mesos::branch,
+  $sourceDir         = $mesos::sourceDir,
+  $mesosConfigParams = $mesos::mesosConfigParams,
+  $install_deps      = $mesos::install_deps,
+  $java_package      = $mesos::java_package,
+  $manage_user       = $mesos::manage_user,
+  $user              = $mesos::user,
+  $install_master    = $mesos::install_master,
+  $masterServiceName = $mesos::masterServiceName,
+  $masterLogDir      = $mesos::masterLogDir,
+  $masterWorkDir     = $mesos::masterWorkDir,
+  $install_slave     = $mesos::install_slave,
+  $network_isolation = $mesos::network_isolation,
+  $slaveServiceName  = $mesos::slaveServiceName,
+  $slaveLogDir       = $mesos::slaveLogDir,
+  $slaveWorkDir      = $mesos::slaveWorkDir,
+  $masterOptions     = $mesos::masterOptions,
+  $slaveOptions      = $mesos::slaveOptions,
+  $installDocker     = $mesos::installDocker,
+  $dockerVersion     = $mesos::dockerVersion,
+  $dockerDNS         = $mesos::dockerDNS,
+  $dockerSocketBind  = $mesos::dockerSocketBind,
+  $manage_firewall   = $mesos::manage_firewall
+) inherits mesos{
+```
 * The __mesos::resource::master__ _resource_ and the default parameters
 ```puppet
 define mesos::resources::master(
@@ -152,12 +187,12 @@ define mesos::resources::master(
   $java_package      = $mesos::java_package,
   $manage_user       = $mesos::manage_user,
   $user              = $mesos::user,
-  $install_master     = $mesos::install_master,
+  $install_master    = $mesos::install_master,
   $masterServiceName = $mesos::masterServiceName,
   $masterLogDir      = $mesos::masterLogDir,
   $masterWorkDir     = $mesos::masterWorkDir,
-  $install_slave      = $mesos::install_slave,
-  $network_isolation  = $mesos::network_isolation,
+  $install_slave     = $mesos::install_slave,
+  $network_isolation = $mesos::network_isolation,
   $slaveServiceName  = $mesos::slaveServiceName,
   $slaveLogDir       = $mesos::slaveLogDir,
   $slaveWorkDir      = $mesos::slaveWorkDir,
@@ -167,7 +202,7 @@ define mesos::resources::master(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall    = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall
 ) {
 ```
 
@@ -188,12 +223,12 @@ define mesos::resources::master(
   $java_package      = $mesos::java_package,
   $manage_user       = $mesos::manage_user,
   $user              = $mesos::user,
-  $install_master     = $mesos::install_master,
+  $install_master    = $mesos::install_master,
   $masterServiceName = $mesos::masterServiceName,
   $masterLogDir      = $mesos::masterLogDir,
   $masterWorkDir     = $mesos::masterWorkDir,
-  $install_slave      = $mesos::install_slave,
-  $network_isolation  = $mesos::network_isolation,
+  $install_slave     = $mesos::install_slave,
+  $network_isolation = $mesos::network_isolation,
   $slaveServiceName  = $mesos::slaveServiceName,
   $slaveLogDir       = $mesos::slaveLogDir,
   $slaveWorkDir      = $mesos::slaveWorkDir,
@@ -203,7 +238,7 @@ define mesos::resources::master(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall    = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall
 ) {
 ```
 ## In your attention: ##

@@ -29,12 +29,12 @@ class mesos(
   $user                 = 'mesos',
   $install_deps         = true,
   $java_package         = 'java-1.8.0-openjdk',
-  $install_master        = false,
+  $install_master       = false,
   $masterServiceName    = 'mesos-master',
   $masterLogDir         = '/var/log/mesos-master',
   $masterWorkDir        = '/var/lib/mesos-master',
-  $install_slave         = false,
-  $network_isolation     = false,
+  $install_slave        = false,
+  $network_isolation    = false,
   $slaveServiceName     = 'mesos-slave',
   $slaveLogDir          = '/var/log/mesos-slave',
   $slaveWorkDir         = '/var/lib/mesos-slave',
@@ -44,7 +44,7 @@ class mesos(
   $dockerVersion        = 'latest',
   $dockerDNS            = '8.8.8.8',
   $dockerSocketBind     = '/var/run/docker.sock',
-  $manage_firewall       = false
+  $manage_firewall      = false
 ) {
 
 
@@ -71,14 +71,14 @@ class mesos(
   anchor { 'mesos:install:end': }
 
   if($install_master == true) {
-    anchor {'mesos:master:start':}
-    mesos::resources::master{"${::fqdn}":} ->
-    anchor {'mesos:master:end':}
+    anchor { 'mesos:master:start': }
+    mesos::resources::master{ "${::fqdn}": } ->
+    anchor { 'mesos:master:end': }
   }
 
   if($install_slave == true) {
-    anchor {'mesos:slave:start':}
-    mesos::resources::slave{"${::fqdn}":}->
-    anchor{'mesos:slave:end':}
+    anchor { 'mesos:slave:start': }
+    mesos::resources::slave{ "${::fqdn}": }->
+    anchor{ 'mesos:slave:end': }
   }
 }
