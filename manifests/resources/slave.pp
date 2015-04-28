@@ -115,7 +115,7 @@ define mesos::resources::slave(
     ensure      => 'running',
     provider    => 'systemd',
     enable      => true,
-    require     => [Exec["Reload_for_${slaveServiceName}"]],
+    require     => [Exec["Reload_for_${slaveServiceName}"]]
   }
 
   exec{ "Purge_old_state_for_${slaveServiceName}":

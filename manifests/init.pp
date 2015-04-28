@@ -72,13 +72,13 @@ class mesos(
 
   if($install_master == true) {
     anchor { 'mesos:master:start': }
-    mesos::resources::master{ "${::fqdn}": } ->
+    mesos::resources::master{ $::fqdn: } ->
     anchor { 'mesos:master:end': }
   }
 
   if($install_slave == true) {
     anchor { 'mesos:slave:start': }
-    mesos::resources::slave{ "${::fqdn}": }->
+    mesos::resources::slave{ $::fqdn: }->
     anchor{ 'mesos:slave:end': }
   }
 }

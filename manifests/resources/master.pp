@@ -115,7 +115,7 @@ define mesos::resources::master(
     ensure      => 'running',
     provider    => 'systemd',
     enable      => true,
-    require     => [Exec["Reload_for_${masterServiceName}"]],
+    require     => [Exec["Reload_for_${masterServiceName}"]]
   }
 
   exec{ "Reload_for_${masterServiceName}":
