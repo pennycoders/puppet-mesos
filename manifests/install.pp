@@ -140,6 +140,7 @@ class mesos::install(
         owner   => $user,
         mode    => 'u=rwxs,o=r',
         require => [
+          Package['git'],
           User[$user],
           Archive['libnl3']
         ],
