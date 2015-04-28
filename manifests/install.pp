@@ -58,7 +58,7 @@ class mesos::install(
   }
 
   if $manage_user == true and !defined(User[$user]) and !defined(Group[$user]) and $user != 'root' {
-    group {$user:
+    group { $user:
       ensure => present,
       name   => $user
     }
@@ -78,7 +78,7 @@ class mesos::install(
   if $install_deps == true {
 
     $deps = $::operatingsystem?{
-      centos => {
+      centos => [
         'byacc',
         'cscope',
         'ctags',
@@ -110,220 +110,220 @@ class mesos::install(
         'subversion-devel',
         'wget',
         'git'
-      },
+      ],
       default => fail('Operating system not supported.')
     }
-  package{$deps:
-    ensure => $ensure
-  }
 
-
-  if !defined(Archive['libnl3']) {
-    archive { 'libnl3':
-      ensure           => present,
-      url              => $libnlUrl,
-      target           => $libnlSrcDir,
-      follow_redirects => true,
-      strip_components => 1,
-      extension        => 'tar.gz',
-      checksum         => false,
-      src_target       => '/tmp'
+    package{ $deps:
+      ensure => $ensure
     }
-  }
 
-  if !defined(File[$libnlSrcDir]) {
-    file { $libnlSrcDir:
-      ensure  => directory,
-      path    => $libnlSrcDir,
-      recurse => true,
-      owner   => $user,
-      mode    => 'u=rwxs,o=r',
-      require => [
-        Package['git'],
-        User[$user],
-        Archive['libnl3']
-      ],
-      notify  => [Exec['configure_libnl3']]
+
+    if !defined(Archive['libnl3']) {
+      archive { 'libnl3':
+        ensure           => present,
+        url              => $libnlUrl,
+        target           => $libnlSrcDir,
+        follow_redirects => true,
+        strip_components => 1,
+        extension        => 'tar.gz',
+        checksum         => false,
+        src_target       => '/tmp'
+      }
     }
-  }
 
-  if !defined(Exec['configure_libnl3']){
-    exec { 'configure_libnl3':
-      path        => [$::path, $libnlSrcDir],
-      cwd         => $libnlSrcDir,
-      command     => "./configure ${libnlConfigParams}",
-      require     => [File[$libnlSrcDir]],
-      refreshonly => true,
-      notify      => [Exec['make_libnl3']]
+    if !defined(File[$libnlSrcDir]) {
+      file { $libnlSrcDir:
+        ensure  => directory,
+        path    => $libnlSrcDir,
+        recurse => true,
+        owner   => $user,
+        mode    => 'u=rwxs,o=r',
+        require => [
+          User[$user],
+          Archive['libnl3']
+        ],
+        notify  => [Exec['configure_libnl3']]
+      }
     }
-  }
 
-  if !defined(Exec['make_libnl3']){
-    exec { 'make_libnl3':
-      path        => [$::path],
-      cwd         => $libnlSrcDir,
-      command     => "make -j${::processorcount}",
-      require     => [Exec['configure_libnl3']],
-      refreshonly => true,
-      notify      => [Exec['make_libnl3_install']]
+    if !defined(Exec['configure_libnl3']){
+      exec { 'configure_libnl3':
+        path        => [$::path, $libnlSrcDir],
+        cwd         => $libnlSrcDir,
+        command     => "./configure ${libnlConfigParams}",
+        require     => [File[$libnlSrcDir]],
+        refreshonly => true,
+        notify      => [Exec['make_libnl3']]
+      }
     }
-  }
 
-  if !defined(Exec['make_libnl3_install']){
-    exec { 'make_libnl3_install':
-      path        => [$::path],
-      cwd         => $libnlSrcDir,
-      require     => [Exec['make_libnl3']],
-      refreshonly => true,
-      command     => "make -j${::processorcount} install"
+    if !defined(Exec['make_libnl3']){
+      exec { 'make_libnl3':
+        path        => [$::path],
+        cwd         => $libnlSrcDir,
+        command     => "make -j${::processorcount}",
+        require     => [Exec['configure_libnl3']],
+        refreshonly => true,
+        notify      => [Exec['make_libnl3_install']]
+      }
     }
-  }
 
-  if !defined(Archive['maven']) {
-    archive { 'maven':
-      ensure           => present,
-      url              => $mvn_url,
-      target           => $mvn_dir,
-      follow_redirects => true,
-      strip_components => 1,
-      extension        => 'tar.gz',
-      checksum         => false,
-      src_target       => '/tmp'
+    if !defined(Exec['make_libnl3_install']){
+      exec { 'make_libnl3_install':
+        path        => [$::path],
+        cwd         => $libnlSrcDir,
+        require     => [Exec['make_libnl3']],
+        refreshonly => true,
+        command     => "make -j${::processorcount} install"
+      }
     }
-  }
 
-  if !defined(File[$mvn_dir]) {
-    file { $mvn_dir:
-      ensure  => directory,
-      owner   => $user,
-      recurse => true,
-      purge   => false,
-      mode    => 'u=rwxs,o=r',
-      require => [
-        User[$user],
-        Archive['maven']
-      ]
+    if !defined(Archive['maven']) {
+      archive { 'maven':
+        ensure           => present,
+        url              => $mvn_url,
+        target           => $mvn_dir,
+        follow_redirects => true,
+        strip_components => 1,
+        extension        => 'tar.gz',
+        checksum         => false,
+        src_target       => '/tmp'
+      }
     }
-  }
 
-  if !defined(File['/usr/bin/mvn']) {
-    file { '/usr/bin/mvn':
-      ensure  => link,
-      target  => "${mvn_dir}/bin/mvn",
-      require => [File[$mvn_dir]],
-      notify  => [Vcsrepo[$sourceDir]]
+    if !defined(File[$mvn_dir]) {
+      file { $mvn_dir:
+        ensure  => directory,
+        owner   => $user,
+        recurse => true,
+        purge   => false,
+        mode    => 'u=rwxs,o=r',
+        require => [
+          User[$user],
+          Archive['maven']
+        ]
+      }
     }
-  }
 
-  if $installDocker == true {
-    if !defined(Class['docker']) {
-      class { 'docker':
-        dns          => $dockerDNS,
-        socket_bind  => "unix:///${dockerSocketBind}",
-        docker_users => [$user],
-        socket_group => $user
+    if !defined(File['/usr/bin/mvn']) {
+      file { '/usr/bin/mvn':
+        ensure  => link,
+        target  => "${mvn_dir}/bin/mvn",
+        require => [File[$mvn_dir]],
+        notify  => [Vcsrepo[$sourceDir]]
+      }
+    }
+
+    if $installDocker == true {
+      if !defined(Class['docker']) {
+        class { 'docker':
+          dns          => $dockerDNS,
+          socket_bind  => "unix:///${dockerSocketBind}",
+          docker_users => [$user],
+          socket_group => $user
+        }
       }
     }
   }
-}
 
-if !defined(Vcsrepo[$sourceDir]) {
-  vcsrepo { $sourceDir:
-    ensure   => $ensure,
-    provider => 'git',
-    source   => $url,
-    revision => $branch,
-    notify   => [File[$sourceDir]]
+  if !defined(Vcsrepo[$sourceDir]) {
+    vcsrepo { $sourceDir:
+      ensure   => $ensure,
+      provider => 'git',
+      source   => $url,
+      revision => $branch,
+      notify   => [File[$sourceDir]]
+    }
   }
-}
 
-$requirements = $network_isolation?{
-  false   => [
-    User[$user],
-    Vcsrepo[$sourceDir]
-  ],
-  true    => [
-    Exec['make_libnl3'],
-    User[$user],
-    Vcsrepo[$sourceDir]
-  ],
-  default => [
-    User[$user],
-    Vcsrepo[$sourceDir]
-  ]
-}
-
-if !defined(File[$sourceDir]) {
-  file { $sourceDir:
-    ensure  => directory,
-    path    => $sourceDir,
-    recurse => true,
-    owner   => $user,
-    mode    => 'u=rwxs,o=r',
-    require => $requirements,
-    notify  => [Exec['bootstrap_mesos']]
-  }
-}
-
-if !defined(Exec['bootstrap_mesos']) {
-  exec { 'bootstrap_mesos':
-    path        => [$::path, $sourceDir],
-    cwd         => $sourceDir,
-    timeout     => 0,
-    command     => 'bootstrap',
-    require     => [
-      File[$sourceDir]
+  $requirements = $network_isolation?{
+    false   => [
+      User[$user],
+      Vcsrepo[$sourceDir]
     ],
-    refreshonly => true,
-    notify      => [File["${sourceDir}/build"]]
+    true    => [
+      Exec['make_libnl3'],
+      User[$user],
+      Vcsrepo[$sourceDir]
+    ],
+    default => [
+      User[$user],
+      Vcsrepo[$sourceDir]
+    ]
   }
-}
 
-if !defined(File["${sourceDir}/build"]) {
-  file { "${sourceDir}/build":
-    ensure  => directory,
-    recurse => true,
-    purge   => true,
-    owner   => $user,
-    mode    => 'u=rwxs,o=r',
-    require => [Exec['bootstrap_mesos']],
-    notify  => Exec['configure_mesos']
+  if !defined(File[$sourceDir]) {
+    file { $sourceDir:
+      ensure  => directory,
+      path    => $sourceDir,
+      recurse => true,
+      owner   => $user,
+      mode    => 'u=rwxs,o=r',
+      require => $requirements,
+      notify  => [Exec['bootstrap_mesos']]
+    }
   }
-}
 
-if !defined(Exec['configure_mesos']) {
-  exec { 'configure_mesos':
-    path        => [$::path, "${sourceDir}/build"],
-    cwd         => "${sourceDir}/build",
-    timeout     => 0,
-    command     => "../configure ${mesosConfigParams}",
-    refreshonly => true,
-    require     => [File["${sourceDir}/build"]],
-    notify      => [Exec['make_mesos']]
+  if !defined(Exec['bootstrap_mesos']) {
+    exec { 'bootstrap_mesos':
+      path        => [$::path, $sourceDir],
+      cwd         => $sourceDir,
+      timeout     => 0,
+      command     => 'bootstrap',
+      require     => [
+        File[$sourceDir]
+      ],
+      refreshonly => true,
+      notify      => [File["${sourceDir}/build"]]
+    }
   }
-}
 
-
-if !defined(Exec['make_mesos']) {
-  exec { 'make_mesos':
-    path        => [$::path],
-    cwd         => "${sourceDir}/build",
-    timeout     => 0,
-    command     => "make -j${::processorcount}",
-    refreshonly => true,
-    require     => [Exec['configure_mesos']],
-    notify      => [Exec['make_install_mesos']]
+  if !defined(File["${sourceDir}/build"]) {
+    file { "${sourceDir}/build":
+      ensure  => directory,
+      recurse => true,
+      purge   => true,
+      owner   => $user,
+      mode    => 'u=rwxs,o=r',
+      require => [Exec['bootstrap_mesos']],
+      notify  => Exec['configure_mesos']
+    }
   }
-}
 
-if !defined(Exec['make_install_mesos']) {
-  exec { 'make_install_mesos':
-    path        => [$::path],
-    cwd         => "${sourceDir}/build",
-    timeout     => 0,
-    refreshonly => true,
-    command     => "make -j${::processorcount} install",
-    require     => [Exec['make_mesos']]
+  if !defined(Exec['configure_mesos']) {
+    exec { 'configure_mesos':
+      path        => [$::path, "${sourceDir}/build"],
+      cwd         => "${sourceDir}/build",
+      timeout     => 0,
+      command     => "../configure ${mesosConfigParams}",
+      refreshonly => true,
+      require     => [File["${sourceDir}/build"]],
+      notify      => [Exec['make_mesos']]
+    }
   }
-}
+
+
+  if !defined(Exec['make_mesos']) {
+    exec { 'make_mesos':
+      path        => [$::path],
+      cwd         => "${sourceDir}/build",
+      timeout     => 0,
+      command     => "make -j${::processorcount}",
+      refreshonly => true,
+      require     => [Exec['configure_mesos']],
+      notify      => [Exec['make_install_mesos']]
+    }
+  }
+
+  if !defined(Exec['make_install_mesos']) {
+    exec { 'make_install_mesos':
+      path        => [$::path],
+      cwd         => "${sourceDir}/build",
+      timeout     => 0,
+      refreshonly => true,
+      command     => "make -j${::processorcount} install",
+      require     => [Exec['make_mesos']]
+    }
+  }
 }
