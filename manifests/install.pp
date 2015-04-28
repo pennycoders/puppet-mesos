@@ -78,7 +78,7 @@ class mesos::install(
   if $install_deps == true {
 
     $deps = $::operatingsystem?{
-      centos => [
+      centos => {
         'byacc',
         'cscope',
         'ctags',
@@ -110,20 +110,11 @@ class mesos::install(
         'subversion-devel',
         'wget',
         'git'
-      ],
+      },
       default => fail('Operating system not supported.')
     }
-
-    each($deps) |$index, $dep| {
-      if !defined(Package[$dep]) {
-      package { $dep:
-      ensure  => 'latest',
-      require => [Package[$deps[$index-1]]]
-      }
-      anchor { "install:${dep}:done":
-        require => Package[$dep]
-      }
-    }
+  package{$deps:
+    ensure => $ensure
   }
 
 
