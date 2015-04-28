@@ -1,0 +1,24 @@
+[Unit]
+Description=<%= @slaveServiceName %>
+After=network.target
+
+
+[Service]
+<% @slaveOptions.each do | option, value| -%>
+<%= "Environment=\"MESOS_#{option}=#{value}\"" %>
+<% end -%>
+Environment="MESOS_WORK_DIR=<%= @slaveWorkDir %>"
+Environment="MESOS_LOG_DIR=<%= @slaveLogDir %>"
+User=<%= @user %>
+SyslogIdentifier=<%= @slaveServiceName %>
+WorkingDirectory=<%= @slaveWorkDir %>
+ExecStart=/usr/local/sbin/mesos-slave
+UMask=0027
+LimitNOFILE=16384
+CPUAccounting=true
+MemoryAccounting=true
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target

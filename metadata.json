@@ -1,0 +1,60 @@
+{
+  "author": "Alex P <a@dtk.me>",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.6.0"
+    },
+    {
+      "name": "puppetlabs/vcsrepo",
+      "version_requirement": ">= 1.2.0"
+    },
+    {
+      "name": "genebean/firewalld2iptables",
+      "version_requirement": ">= 0.1.2"
+    },
+    {
+      "name": "puppetlabs/firewall",
+      "version_requirement": ">= 1.5.0"
+    },
+    {
+      "name": "garethr/docker",
+      "version_requirement": ">= 3.5.0"
+    },
+    {
+      "name": "camptocamp/archive",
+      "version_requirement": ">= 0.5.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "name": "pennycoders-mesos",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    }
+  ],
+  "project_page": "https://github.com/pennycoders/puppet-mesos",
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "source": "https://github.com/pennycoders/puppet-mesos",
+  "summary": "Apache mesos installation / management module",
+  "tags": [
+    "Mesos",
+    "Apache",
+    "Docker",
+    "Cloud",
+    "Mesosphere"
+  ],
+  "version": "1.0.0"
+}

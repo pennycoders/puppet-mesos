@@ -1,0 +1,25 @@
+[Unit]
+Description=<%= @masterServiceName %>
+After=network.target
+
+
+[Service]
+<% @masterOptions.each do | option, value| -%>
+# <%= "Environment=MESOS_#{option}=#{value}" %>
+<%= "Environment=\"MESOS_#{option}=#{value}\"" %>
+<% end -%>
+Environment="MESOS_WORK_DIR=<%= @masterWorkDir %>"
+Environment="MESOS_LOG_DIR=<%= @masterLogDir %>"
+User=<%= @user %>
+SyslogIdentifier=<%= @masterServiceName %>
+WorkingDirectory=<%= @masterWorkDir %>
+ExecStart=/usr/local/sbin/mesos-master
+UMask=0027
+LimitNOFILE=16384
+CPUAccounting=true
+MemoryAccounting=true
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target
