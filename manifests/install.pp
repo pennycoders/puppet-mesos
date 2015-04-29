@@ -274,7 +274,7 @@ class mesos::install(
         File[$sourceDir],
       ],
       refreshonly => true,
-      notify      => [File[$sourceDir],File["${sourceDir}/build"]]
+      notify      => [File["${sourceDir}/build"]]
     }
   }
 
