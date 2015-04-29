@@ -287,8 +287,7 @@ class mesos::install(
       purge   => true,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
-      require => [Exec['bootstrap_mesos']],
-      notify  => Exec['configure_mesos']
+      require => [Exec['bootstrap_mesos']]
     }
   }
 
