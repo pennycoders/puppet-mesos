@@ -26,7 +26,7 @@ class mesos(
   $sourceDir            = '/opt/mesos',
   $mesosConfigParams    = '--enable-optimize',
   $manage_user          = true,
-  $user                 = 'mesos',
+  $user                 = 'root',
   $install_deps         = true,
   $java_package         = 'java-1.8.0-openjdk',
   $install_master       = false,
