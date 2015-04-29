@@ -271,10 +271,13 @@ class mesos::install(
       timeout     => 0,
       command     => 'bootstrap',
       require     => [
-        File[$sourceDir]
+        File[$sourceDir],
       ],
       refreshonly => true,
-      notify      => [File["${sourceDir}/build"]]
+      notify      => [
+        File[$sourceDir],
+        File["${sourceDir}/build"]
+      ]
     }
   }
 
@@ -298,7 +301,11 @@ class mesos::install(
       command     => "../configure ${mesosConfigParams}",
       refreshonly => true,
       require     => [File["${sourceDir}/build"]],
-      notify      => [Exec['make_mesos']]
+      notify      => [
+        File[$sourceDir],
+        File["${sourceDir}/build"],
+        Exec['make_mesos']
+      ]
     }
   }
 
@@ -311,7 +318,11 @@ class mesos::install(
       command     => "make -j${::processorcount}",
       refreshonly => true,
       require     => [Exec['configure_mesos']],
-      notify      => [Exec['make_install_mesos']]
+      notify      => [
+        File[$sourceDir],
+        File["${sourceDir}/build"],
+        Exec['make_install_mesos']
+      ]
     }
   }
 
@@ -322,7 +333,13 @@ class mesos::install(
       timeout     => 0,
       refreshonly => true,
       command     => "make -j${::processorcount} install",
-      require     => [Exec['make_mesos']]
+      require     => [
+        Exec['make_mesos']
+      ],
+      notify      => [
+        File[$sourceDir],
+        File["${sourceDir}/build"]
+      ]
     }
   }
 }
