@@ -301,7 +301,6 @@ class mesos::install(
       refreshonly => true,
       require     => [File["${sourceDir}/build"]],
       notify      => [
-        File[$sourceDir],
         File["${sourceDir}/build"],
         Exec['make_mesos']
       ]
