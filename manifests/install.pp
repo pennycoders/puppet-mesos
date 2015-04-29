@@ -259,7 +259,8 @@ class mesos::install(
       recurse => true,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
-      require => $requirements
+      require => $requirements,
+      notify  => [Exec['bootstrap_mesos']]
     }
   }
 
@@ -274,7 +275,6 @@ class mesos::install(
       ],
       refreshonly => true,
       notify      => [
-        File[$sourceDir],
         File["${sourceDir}/build"]
       ]
     }
