@@ -259,8 +259,7 @@ class mesos::install(
       recurse => true,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
-      require => $requirements,
-      notify  => [Exec['bootstrap_mesos']]
+      require => $requirements
     }
   }
 
