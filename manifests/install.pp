@@ -334,8 +334,7 @@ class mesos::install(
         Exec['make_mesos']
       ],
       notify      => [
-        File[$sourceDir],
-        File["${sourceDir}/build"]
+        File[$sourceDir]
       ]
     }
   }
