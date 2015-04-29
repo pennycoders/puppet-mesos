@@ -297,11 +297,12 @@ class mesos::install(
       timeout     => 0,
       command     => "../configure ${mesosConfigParams}",
       refreshonly => true,
-      creates     => "${sourceDir}/build/bin/mesos-master.sh",
+      creates     => "/sr/local/sbin/mesos",
       require     => [File["${sourceDir}/build"]],
       notify      => [Exec['make_mesos']]
     }
   }
+
 
   if !defined(Exec['make_mesos']) {
     exec { 'make_mesos':
