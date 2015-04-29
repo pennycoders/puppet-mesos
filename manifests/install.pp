@@ -114,9 +114,7 @@ class mesos::install(
       default => fail('Operating system not supported.')
     }
 
-    package{ $deps:
-      ensure => $ensure
-    }
+    ensure_packages($deps, { ensure => $ensure})
 
 
     if !defined(Archive['libnl3']) {
