@@ -37,6 +37,7 @@
     }
   ],
   "project_page": "https://github.com/pennycoders/puppet-mesos",
+  "issues_url": "https://github.com/pennycoders/puppet-mesos/issues",
   "requirements": [
     {
       "name": "pe",
@@ -56,5 +57,5 @@
     "Cloud",
     "Mesosphere"
   ],
-  "version": "1.0.6"
+  "version": "1.0.7"
 }
