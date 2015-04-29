@@ -9,11 +9,12 @@ After=network.target
 <% end -%>
 Environment="MESOS_WORK_DIR=<%= @slaveWorkDir %>"
 Environment="MESOS_LOG_DIR=<%= @slaveLogDir %>"
-User=<%= @user %>
+User=root
+Group=root
+UMask=0027
 SyslogIdentifier=<%= @slaveServiceName %>
 WorkingDirectory=<%= @slaveWorkDir %>
 ExecStart=/usr/local/sbin/mesos-slave
-UMask=0027
 LimitNOFILE=16384
 CPUAccounting=true
 MemoryAccounting=true

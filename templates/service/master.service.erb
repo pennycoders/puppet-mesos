@@ -10,11 +10,12 @@ After=network.target
 <% end -%>
 Environment="MESOS_WORK_DIR=<%= @masterWorkDir %>"
 Environment="MESOS_LOG_DIR=<%= @masterLogDir %>"
-User=<%= @user %>
+User=root
+Group=root
+UMask=0027
 SyslogIdentifier=<%= @masterServiceName %>
 WorkingDirectory=<%= @masterWorkDir %>
 ExecStart=/usr/local/sbin/mesos-master
-UMask=0027
 LimitNOFILE=16384
 CPUAccounting=true
 MemoryAccounting=true
