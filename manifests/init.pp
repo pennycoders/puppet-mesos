@@ -44,13 +44,14 @@ class mesos(
   $dockerVersion        = 'latest',
   $dockerDNS            = '8.8.8.8',
   $dockerSocketBind     = '/var/run/docker.sock',
-  $manage_firewall      = false
+  $manage_firewall      = false,
+  $force_install        = false
 ) {
 
 
   validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$dockerVersion,$dockerDNS,$mesosConfigParams)
   validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir,$dockerSocketBind)
-  validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation)
+  validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation, $force_install)
   validate_hash($masterOptions,$slaveOptions)
 
 

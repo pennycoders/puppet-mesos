@@ -1,11 +1,4 @@
 # mesos::install class
-# JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
-# sudo dd if=/dev/zero of=/swapfile bs=64M count=16
-# sudo mkswap /swapfile
-# udo swapon /swapfile
-# After compiling:
-# sudo swapoff /swapfile
-# sudo rm /swapfile
 class mesos::install(
   $ensure            = $mesos::ensure,
   $url               = $mesos::url,
@@ -36,12 +29,13 @@ class mesos::install(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall   = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall,
+  $force_install     = $mesos::force_install
 ) inherits mesos{
 
   validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$dockerVersion,$dockerDNS,$mesosConfigParams)
   validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir,$dockerSocketBind)
-  validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation)
+  validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation, $force_install)
   validate_hash($masterOptions,$slaveOptions)
 
 
@@ -55,6 +49,12 @@ class mesos::install(
     if  !has_interface_with('ipaddress', $masterOptions['IP']) {
       fail('The specified does not belong to this host.')
     }
+  }
+
+  $lockFile = $force_install? {
+    true    => "${sourceDir}/mesos-${branch}.nolock",
+    false   => undef,
+    default => undef
   }
 
   if $manage_user == true and !defined(User[$user]) and !defined(Group[$user]) and $user != 'root' {
@@ -270,6 +270,7 @@ class mesos::install(
       cwd         => $sourceDir,
       timeout     => 0,
       command     => 'bootstrap',
+      creates     => $lockFile,
       require     => [
         File[$sourceDir],
       ],
@@ -277,6 +278,7 @@ class mesos::install(
       notify      => [File["${sourceDir}/build"]]
     }
   }
+
 
   if !defined(File["${sourceDir}/build"]) {
     file { "${sourceDir}/build":
@@ -297,7 +299,7 @@ class mesos::install(
       timeout     => 0,
       command     => "../configure ${mesosConfigParams}",
       refreshonly => true,
-      creates     => "/sr/local/sbin/mesos",
+      creates     => $lockFile,
       require     => [File["${sourceDir}/build"]],
       notify      => [Exec['make_mesos']]
     }
@@ -322,8 +324,20 @@ class mesos::install(
       cwd         => "${sourceDir}/build",
       timeout     => 0,
       refreshonly => true,
+      creates     => $lockFile,
       command     => "make -j${::processorcount} install",
-      require     => [Exec['make_mesos']]
+      require     => [Exec['make_mesos']],
+      notify      => [File["${sourceDir}/mesos-${branch}.nolock"]]
+    }
+  }
+
+  if !defined(File["${sourceDir}/mesos-${branch}.nolock"]) {
+    file {"${sourceDir}/mesos-${branch}.nolock":
+      ensure  => file,
+      content => $branch,
+      owner   => $user,
+      mode    => 'u=rwxs,o=r',
+      require => $requirements
     }
   }
 }

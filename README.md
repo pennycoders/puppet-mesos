@@ -131,7 +131,9 @@ class mesos(
   # Docker bind socket
   $dockerSocketBind     = '/var/run/docker.sock',
   # Whether or not to manage the firewall rules - Please note that by default, this module replaces firewalld with iptables
-  $manage_firewall      = false
+  $manage_firewall      = false,
+  # Whether we the module should attempt to install Mesos forcefully.
+  $force_install        = false
 ) {
 ```
 
@@ -167,7 +169,8 @@ class mesos::install(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall   = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall,
+  $force_install     = $mesos::force_install
 ) inherits mesos{
 ```
 * The __mesos::resource::master__ _resource_ and the default parameters
@@ -202,7 +205,8 @@ define mesos::resources::master(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall   = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall,
+  $force_install     = $mesos::force_install
 ) {
 ```
 
@@ -238,7 +242,8 @@ define mesos::resources::master(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall   = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall,
+  $force_install     = $mesos::force_install
 ) {
 ```
 ## In your attention: ##

@@ -29,12 +29,13 @@ define mesos::resources::master(
   $dockerVersion     = $mesos::dockerVersion,
   $dockerDNS         = $mesos::dockerDNS,
   $dockerSocketBind  = $mesos::dockerSocketBind,
-  $manage_firewall   = $mesos::manage_firewall
+  $manage_firewall   = $mesos::manage_firewall,
+  $force_install     = $mesos::force_install
 ) {
 
   validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$dockerVersion,$dockerDNS,$mesosConfigParams)
   validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir,$dockerSocketBind)
-  validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation)
+  validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation, $force_install)
   validate_hash($masterOptions,$slaveOptions)
 
 
@@ -52,7 +53,7 @@ define mesos::resources::master(
 
   require mesos::install
 
-  file {$masterLogDir:
+  file { $masterLogDir:
     ensure  => directory,
     recurse => true,
     purge   => false,
@@ -60,7 +61,7 @@ define mesos::resources::master(
     mode    => 'u=rwxs,o=r'
   }
 
-  file {$masterWorkDir:
+  file { $masterWorkDir:
     ensure  => directory,
     recurse => true,
     purge   => false,
