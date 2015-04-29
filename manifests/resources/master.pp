@@ -112,17 +112,17 @@ define mesos::resources::master(
   }
 
   service { $masterServiceName:
-    ensure      => 'running',
-    provider    => 'systemd',
-    enable      => true,
-    require     => [Exec["Reload_for_${masterServiceName}"]]
+    ensure   => 'running',
+    provider => 'systemd',
+    enable   => true,
+    require  => [Exec["Reload_for_${masterServiceName}"]]
   }
 
   exec{ "Reload_for_${masterServiceName}":
-    path        => [$::path],
-    command     => 'systemctl daemon-reload',
-    notify      => [Service[$masterServiceName]],
-    require     => [File["/usr/lib/systemd/system/${masterServiceName}.service"]]
+    path    => [$::path],
+    command => 'systemctl daemon-reload',
+    notify  => [Service[$masterServiceName]],
+    require => [File["/usr/lib/systemd/system/${masterServiceName}.service"]]
   }
 
 }

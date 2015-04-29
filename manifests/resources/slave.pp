@@ -112,24 +112,24 @@ define mesos::resources::slave(
   }
 
   service { $slaveServiceName:
-    ensure      => 'running',
-    provider    => 'systemd',
-    enable      => true,
-    require     => [Exec["Reload_for_${slaveServiceName}"]]
+    ensure   => 'running',
+    provider => 'systemd',
+    enable   => true,
+    require  => [Exec["Reload_for_${slaveServiceName}"]]
   }
 
   exec{ "Purge_old_state_for_${slaveServiceName}":
-    path        => [$::path],
-    command     => 'rm -f /var/lib/mesos-slave/meta/slaves/latest',
-    notify      => [Exec["Reload_for_${slaveServiceName}"]],
-    require     => [File["/usr/lib/systemd/system/${masterServiceName}.service"]]
+    path    => [$::path],
+    command => 'rm -f /var/lib/mesos-slave/meta/slaves/latest',
+    notify  => [Exec["Reload_for_${slaveServiceName}"]],
+    require => [File["/usr/lib/systemd/system/${masterServiceName}.service"]]
   }
 
   exec{ "Reload_for_${slaveServiceName}":
-    path        => [$::path],
-    command     => 'systemctl daemon-reload',
-    notify      => [Service[$slaveServiceName]],
-    require     => [
+    path    => [$::path],
+    command => 'systemctl daemon-reload',
+    notify  => [Service[$slaveServiceName]],
+    require => [
       File["/usr/lib/systemd/system/${slaveServiceName}.service"],
       Exec["Purge_old_state_for_${slaveServiceName}"]]
   }
