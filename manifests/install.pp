@@ -52,7 +52,7 @@ class mesos::install(
   }
 
   $lockFile = $force_install? {
-    true    => "${sourceDir}/mesos-${branch}.nolock",
+    true    => "${sourceDir}/mesos-${branch}.lock",
     false   => undef,
     default => undef
   }
@@ -327,12 +327,12 @@ class mesos::install(
       creates     => $lockFile,
       command     => "make -j${::processorcount} install",
       require     => [Exec['make_mesos']],
-      notify      => [File["${sourceDir}/mesos-${branch}.nolock"]]
+      notify      => [File["${sourceDir}/mesos-${branch}.lock"]]
     }
   }
 
-  if !defined(File["${sourceDir}/mesos-${branch}.nolock"]) {
-    file {"${sourceDir}/mesos-${branch}.nolock":
+  if !defined(File["${sourceDir}/mesos-${branch}.lock"]) {
+    file {"${sourceDir}/mesos-${branch}.lock":
       ensure  => file,
       content => $branch,
       owner   => $user,
