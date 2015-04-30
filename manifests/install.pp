@@ -53,8 +53,8 @@ class mesos::install(
 
   $lockFile = $force_install? {
     true    => "/tmp/installed-mesos-${branch}.lock",
-    false   => "/tmp/nolock",
-    default => "/tmp/nolock"
+    false   => "/tmp/${::uptime}.nolock",
+    default => "/tmp/${::uptime}.nolock"
   }
 
   if $manage_user == true and !defined(User[$user]) and !defined(Group[$user]) and $user != 'root' {
