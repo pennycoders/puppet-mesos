@@ -300,7 +300,10 @@ class mesos::install(
       command     => "../configure ${mesosConfigParams}",
       refreshonly => true,
       creates     => $lockFile,
-      require     => [File["${sourceDir}/build"]],
+      require     => [
+        Exec['make_libnl3_install'],
+        File["${sourceDir}/build"]
+      ],
       notify      => [Exec['make_mesos']]
     }
   }
@@ -332,7 +335,7 @@ class mesos::install(
   }
 
   if !defined(File["/tmp/installed-mesos-${branch}.lock"]) {
-    file {"/tmp/installed-mesos-${branch}.lock":
+    file { "/tmp/installed-mesos-${branch}.lock":
       ensure  => file,
       content => $branch,
       owner   => $user,
