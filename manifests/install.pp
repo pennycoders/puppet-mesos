@@ -327,7 +327,7 @@ class mesos::install(
       creates     => $lockFile,
       command     => "make -j${::processorcount} install",
       require     => [Exec['make_mesos']],
-      notify      => [File["$/tmp/installed-mesos-${branch}.lock"]]
+      notify      => [File["/tmp/installed-mesos-${branch}.lock"]]
     }
   }
 
