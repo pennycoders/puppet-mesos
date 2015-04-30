@@ -67,7 +67,7 @@ class mesos::install(
       managehome => true,
       shell      => '/sbin/nologin',
       require    => [Group[$user]],
-      groups     => [$user]
+      groups     => [$user,'root']
     }
   } elsif  $manage_user == true and !defined(User[$user]) and $user == 'root' {
     user { $user:
