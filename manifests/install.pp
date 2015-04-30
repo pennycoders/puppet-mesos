@@ -53,8 +53,8 @@ class mesos::install(
 
   $lockFile = $force_install? {
     true    => "/tmp/installed-mesos-${branch}.lock",
-    false   => undef,
-    default => undef
+    false   => "/tmp/nolock",
+    default => "/tmp/nolock"
   }
 
   if $manage_user == true and !defined(User[$user]) and !defined(Group[$user]) and $user != 'root' {
@@ -150,6 +150,7 @@ class mesos::install(
       exec { 'configure_libnl3':
         path        => [$::path, $libnlSrcDir],
         cwd         => $libnlSrcDir,
+        creates     => $lockFile,
         command     => "./configure ${libnlConfigParams}",
         require     => [File[$libnlSrcDir]],
         refreshonly => true,
@@ -161,6 +162,7 @@ class mesos::install(
       exec { 'make_libnl3':
         path        => [$::path],
         cwd         => $libnlSrcDir,
+        creates     => $lockFile,
         command     => "make -j${::processorcount}",
         require     => [Exec['configure_libnl3']],
         refreshonly => true,
@@ -172,6 +174,7 @@ class mesos::install(
       exec { 'make_libnl3_install':
         path        => [$::path],
         cwd         => $libnlSrcDir,
+        creates     => $lockFile,
         require     => [Exec['make_libnl3']],
         refreshonly => true,
         command     => "make -j${::processorcount} install"
