@@ -284,7 +284,7 @@ class mesos::install(
     file { "${sourceDir}/build":
       ensure  => directory,
       recurse => true,
-      purge   => true,
+      purge   => false,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
       require => [Exec['bootstrap_mesos']],
