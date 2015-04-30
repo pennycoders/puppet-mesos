@@ -141,8 +141,7 @@ class mesos::install(
           Package['git'],
           User[$user],
           Archive['libnl3']
-        ],
-        notify  => [Exec['configure_libnl3']]
+        ]
       }
     }
 
@@ -153,7 +152,6 @@ class mesos::install(
         creates     => $lockFile,
         command     => "./configure ${libnlConfigParams}",
         require     => [File[$libnlSrcDir]],
-        refreshonly => true,
         notify      => [Exec['make_libnl3']]
       }
     }
@@ -165,7 +163,6 @@ class mesos::install(
         creates     => $lockFile,
         command     => "make -j${::processorcount}",
         require     => [Exec['configure_libnl3']],
-        refreshonly => true,
         notify      => [Exec['make_libnl3_install']]
       }
     }
@@ -176,7 +173,6 @@ class mesos::install(
         cwd         => $libnlSrcDir,
         creates     => $lockFile,
         require     => [Exec['make_libnl3']],
-        refreshonly => true,
         command     => "make -j${::processorcount} install"
       }
     }
@@ -279,7 +275,6 @@ class mesos::install(
       require     => [
         File[$sourceDir],
       ],
-      refreshonly => true,
       notify      => [File["${sourceDir}/build"]]
     }
   }
@@ -304,7 +299,6 @@ class mesos::install(
       cwd         => "${sourceDir}/build",
       timeout     => 0,
       command     => "../configure ${mesosConfigParams}",
-      refreshonly => true,
       creates     => $lockFile,
       require     => [
         Exec['make_libnl3_install'],
@@ -321,7 +315,6 @@ class mesos::install(
       cwd         => "${sourceDir}/build",
       timeout     => 0,
       command     => "make -j${::processorcount}",
-      refreshonly => true,
       require     => [Exec['configure_mesos']],
       notify      => [Exec['make_install_mesos']]
     }
@@ -332,7 +325,6 @@ class mesos::install(
       path        => [$::path],
       cwd         => "${sourceDir}/build",
       timeout     => 0,
-      refreshonly => true,
       creates     => $lockFile,
       command     => "make -j${::processorcount} install",
       require     => [Exec['make_mesos']],
