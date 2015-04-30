@@ -232,7 +232,10 @@ class mesos::install(
       provider => 'git',
       source   => $url,
       revision => $branch,
-      notify   => [File[$sourceDir]]
+      notify   => [
+        File[$sourceDir],
+        Exec['bootstrap_mesos']
+      ]
     }
   }
 
@@ -242,7 +245,7 @@ class mesos::install(
       Vcsrepo[$sourceDir]
     ],
     true    => [
-      Exec['make_libnl3'],
+      Exec['make_libnl3_install'],
       User[$user],
       Vcsrepo[$sourceDir]
     ],
@@ -259,8 +262,7 @@ class mesos::install(
       recurse => true,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
-      require => $requirements,
-      notify  => [Exec['bootstrap_mesos']]
+      require => $requirements
     }
   }
 
