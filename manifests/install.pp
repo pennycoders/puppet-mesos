@@ -232,8 +232,7 @@ class mesos::install(
       source   => $url,
       revision => $branch,
       notify   => [
-        File[$sourceDir],
-        Exec['bootstrap_mesos']
+        File[$sourceDir]
       ]
     }
   }
