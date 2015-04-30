@@ -55,7 +55,7 @@ define mesos::resources::slave(
 
   file { $slaveLogDir:
     ensure  => directory,
-    recurse => true,
+    recurse => false,
     purge   => false,
     owner   => $user,
     mode    => 'u=rwxs,o=r'
@@ -63,7 +63,7 @@ define mesos::resources::slave(
 
   file { $slaveWorkDir:
     ensure  => directory,
-    recurse => true,
+    recurse => false,
     purge   => false,
     owner   => $user,
     mode    => 'u=rwxs,o=r'
