@@ -9,7 +9,7 @@ After=network.target
 <% end -%>
 Environment="MESOS_WORK_DIR=<%= @slaveWorkDir %>"
 Environment="MESOS_LOG_DIR=<%= @slaveLogDir %>"
-User=root
+User=<%= @user %>
 Group=root
 UMask=0027
 SyslogIdentifier=<%= @slaveServiceName %>
