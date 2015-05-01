@@ -55,8 +55,8 @@ define mesos::resources::slave(
 
   file { $slaveLogDir:
     ensure  => directory,
-    recurse => false,
-    purge   => false,
+    recurse => true,
+    purge   => true,
     owner   => $user,
     mode    => 'u=rwxs,o=r'
   }
