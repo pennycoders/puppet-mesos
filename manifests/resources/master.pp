@@ -56,7 +56,7 @@ define mesos::resources::master(
   file { $masterLogDir:
     ensure  => directory,
     recurse => true,
-    purge   => false,
+    purge   => true,
     owner   => $user,
     mode    => 'u=rwxs,o=r'
   }
@@ -64,7 +64,7 @@ define mesos::resources::master(
   file { $masterWorkDir:
     ensure  => directory,
     recurse => true,
-    purge   => false,
+    purge   => true,
     owner   => $user,
     mode    => 'u=rwxs,o=r'
   }
