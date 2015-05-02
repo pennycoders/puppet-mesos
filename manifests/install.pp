@@ -147,33 +147,33 @@ class mesos::install(
 
     if !defined(Exec['configure_libnl3']){
       exec { 'configure_libnl3':
-        path        => [$::path, $libnlSrcDir],
-        cwd         => $libnlSrcDir,
-        creates     => $lockFile,
-        command     => "./configure ${libnlConfigParams}",
-        require     => [File[$libnlSrcDir]],
-        notify      => [Exec['make_libnl3']]
+        path    => [$::path, $libnlSrcDir],
+        cwd     => $libnlSrcDir,
+        creates => $lockFile,
+        command => "./configure ${libnlConfigParams}",
+        require => [File[$libnlSrcDir]],
+        notify  => [Exec['make_libnl3']]
       }
     }
 
     if !defined(Exec['make_libnl3']){
       exec { 'make_libnl3':
-        path        => [$::path],
-        cwd         => $libnlSrcDir,
-        creates     => $lockFile,
-        command     => "make -j${::processorcount}",
-        require     => [Exec['configure_libnl3']],
-        notify      => [Exec['make_libnl3_install']]
+        path    => [$::path],
+        cwd     => $libnlSrcDir,
+        creates => $lockFile,
+        command => "make -j${::processorcount}",
+        require => [Exec['configure_libnl3']],
+        notify  => [Exec['make_libnl3_install']]
       }
     }
 
     if !defined(Exec['make_libnl3_install']){
       exec { 'make_libnl3_install':
-        path        => [$::path],
-        cwd         => $libnlSrcDir,
-        creates     => $lockFile,
-        require     => [Exec['make_libnl3']],
-        command     => "make -j${::processorcount} install"
+        path    => [$::path],
+        cwd     => $libnlSrcDir,
+        creates => $lockFile,
+        require => [Exec['make_libnl3']],
+        command => "make -j${::processorcount} install"
       }
     }
 
@@ -266,15 +266,15 @@ class mesos::install(
 
   if !defined(Exec['bootstrap_mesos']) {
     exec { 'bootstrap_mesos':
-      path        => [$::path, $sourceDir],
-      cwd         => $sourceDir,
-      timeout     => 0,
-      command     => 'bootstrap',
-      creates     => $lockFile,
-      require     => [
+      path    => [$::path, $sourceDir],
+      cwd     => $sourceDir,
+      timeout => 0,
+      command => 'bootstrap',
+      creates => $lockFile,
+      require => [
         File[$sourceDir],
       ],
-      notify      => [File["${sourceDir}/build"]]
+      notify  => [File["${sourceDir}/build"]]
     }
   }
 
@@ -294,40 +294,40 @@ class mesos::install(
 
   if !defined(Exec['configure_mesos']) {
     exec { 'configure_mesos':
-      path        => [$::path, "${sourceDir}/build"],
-      cwd         => "${sourceDir}/build",
-      timeout     => 0,
-      command     => "../configure ${mesosConfigParams}",
-      creates     => $lockFile,
-      require     => [
+      path    => [$::path, "${sourceDir}/build"],
+      cwd     => "${sourceDir}/build",
+      timeout => 0,
+      command => "../configure ${mesosConfigParams}",
+      creates => $lockFile,
+      require => [
         Exec['make_libnl3_install'],
         File["${sourceDir}/build"]
       ],
-      notify      => [Exec['make_mesos']]
+      notify  => [Exec['make_mesos']]
     }
   }
 
 
   if !defined(Exec['make_mesos']) {
     exec { 'make_mesos':
-      path        => [$::path],
-      cwd         => "${sourceDir}/build",
-      timeout     => 0,
-      command     => "make -j${::processorcount}",
-      require     => [Exec['configure_mesos']],
-      notify      => [Exec['make_install_mesos']]
+      path    => [$::path],
+      cwd     => "${sourceDir}/build",
+      timeout => 0,
+      command => "make -j${::processorcount}",
+      require => [Exec['configure_mesos']],
+      notify  => [Exec['make_install_mesos']]
     }
   }
 
   if !defined(Exec['make_install_mesos']) {
     exec { 'make_install_mesos':
-      path        => [$::path],
-      cwd         => "${sourceDir}/build",
-      timeout     => 0,
-      creates     => $lockFile,
-      command     => "make -j${::processorcount} install",
-      require     => [Exec['make_mesos']],
-      notify      => [File["/tmp/installed-mesos-${branch}.lock"]]
+      path    => [$::path],
+      cwd     => "${sourceDir}/build",
+      timeout => 0,
+      creates => $lockFile,
+      command => "make -j${::processorcount} install",
+      require => [Exec['make_mesos']],
+      notify  => [File["/tmp/installed-mesos-${branch}.lock"]]
     }
   }
 
