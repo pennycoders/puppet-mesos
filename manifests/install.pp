@@ -51,8 +51,6 @@ class mesos::install(
     }
   }
 
-  require mesos
-
   $lockFile = $force_install? {
     false   => "/tmp/installed-mesos-${branch}.lock",
     true    => "/tmp/installed-mesos-${branch}.nolock",
