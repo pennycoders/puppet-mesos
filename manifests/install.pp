@@ -283,7 +283,7 @@ class mesos::install(
     file { "${sourceDir}/build":
       ensure  => directory,
       recurse => true,
-      purge   => false,
+      purge   => true,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
       require => [
