@@ -278,12 +278,11 @@ class mesos::install(
     }
   }
 
-
   if !defined(File["${sourceDir}/build"]) {
     file { "${sourceDir}/build":
       ensure  => directory,
       recurse => true,
-      purge   => true,
+      purge   => $force_install,
       owner   => $user,
       mode    => 'u=rwxs,o=r',
       require => [
