@@ -237,21 +237,11 @@ class mesos::install(
     }
   }
 
-  $requirements = $network_isolation?{
-    false   => [
-      User[$user],
-      Vcsrepo[$sourceDir]
-    ],
-    true    => [
+  $requirements = [
       Exec['make_libnl3_install'],
       User[$user],
       Vcsrepo[$sourceDir]
-    ],
-    default => [
-      User[$user],
-      Vcsrepo[$sourceDir]
     ]
-  }
 
   if !defined(File[$sourceDir]) {
     file { $sourceDir:
