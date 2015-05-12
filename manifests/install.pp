@@ -79,6 +79,8 @@ class mesos::install(
 
     $deps = $::operatingsystem?{
       centos => [
+        'iproute',
+        'iproute-devel',
         'byacc',
         'cscope',
         'ctags',
