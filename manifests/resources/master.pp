@@ -70,24 +70,19 @@ define mesos::resources::master(
   }
 
   if $manage_firewall == true and $masterOptions['IP'] != undef and $masterOptions['PORT'] != undef {
-    if !defined(Class['firewalld2iptables']) {
-      class { 'firewalld2iptables':
-        manage_package   => true,
-        iptables_ensure  => 'latest',
-        iptables_enable  => true,
-        ip6tables_enable => true
-      }
-    }
 
-    if !defined(Class['firewall']) {
-      class { 'firewall': }
-    }
+    ensure_resource('class', 'firewalld2iptables', {
+      manage_package   => true,
+      iptables_ensure  => 'latest',
+      iptables_enable  => true,
+      ip6tables_enable => true
+    })
 
-    if !defined(Service['firewalld']) {
-      service { 'firewalld':
-        ensure => 'stopped'
-      }
-    }
+    ensure_resource('class', 'firewall', {})
+
+    ensure_resource('service', 'firewalld', {
+      ensure => 'stopped'
+    })
 
     firewall { "0_${masterServiceName}_allow_incoming":
       port        => [$masterOptions['PORT']],

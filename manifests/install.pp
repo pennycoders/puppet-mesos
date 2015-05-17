@@ -216,119 +216,100 @@ class mesos::install(
     }
 
     if $installDocker == true {
-      if !defined(Class['docker']) {
-        class { 'docker':
-          dns          => $dockerDNS,
-          socket_bind  => "unix:///${dockerSocketBind}",
-          docker_users => [$user],
-          socket_group => $user
-        }
-      }
+      ensure_resource('class','docker',{
+        dns          => $dockerDNS,
+        socket_bind  => "unix:///${dockerSocketBind}",
+        docker_users => [$user],
+        socket_group => $user
+      })
     }
   }
 
-  if !defined(Vcsrepo[$sourceDir]) {
-    vcsrepo { $sourceDir:
-      ensure   => $ensure,
-      provider => 'git',
-      source   => $url,
-      revision => $branch,
-      notify   => [
-        File[$sourceDir]
-      ]
-    }
-  }
+  ensure_resource('vcsrepo',$sourceDir,{
+    ensure   => $ensure,
+    provider => 'git',
+    source   => $url,
+    revision => $branch,
+    notify   => [
+      File[$sourceDir]
+    ]
+  })
 
   $requirements = [
-      Exec['make_libnl3_install'],
-      User[$user],
-      Vcsrepo[$sourceDir]
+    Exec['make_libnl3_install'],
+    User[$user],
+    Vcsrepo[$sourceDir]
+  ]
+
+  ensure_resource('file', $sourceDir, {
+    ensure  => directory,
+    path    => $sourceDir,
+    recurse => true,
+    owner   => $user,
+    mode    => 'u=rwxs,o=r',
+    require => $requirements
+  })
+
+  ensure_resource('exec', 'bootstrap_mesos', {
+    path    => [$::path, $sourceDir],
+    cwd     => $sourceDir,
+    timeout => 0,
+    command => 'bootstrap',
+    creates => $lockFile,
+    require => [
+      File[$sourceDir],
+    ],
+    notify  => [File["${sourceDir}/build"]]
+  })
+
+  ensure_resource('file', "${sourceDir}/build", {
+    ensure  => directory,
+    recurse => true,
+    purge   => $force_install,
+    owner   => $user,
+    mode    => 'u=rwxs,o=r',
+    require => [
+      Exec['bootstrap_mesos']
     ]
+  })
 
-  if !defined(File[$sourceDir]) {
-    file { $sourceDir:
-      ensure  => directory,
-      path    => $sourceDir,
-      recurse => true,
-      owner   => $user,
-      mode    => 'u=rwxs,o=r',
-      require => $requirements
-    }
-  }
+  ensure_resource('exec', 'configure_mesos', {
+    path    => [$::path, "${sourceDir}/build"],
+    cwd     => "${sourceDir}/build",
+    timeout => 0,
+    command => "../configure ${mesosConfigParams}",
+    creates => $lockFile,
+    require => [
+      Exec['make_libnl3_install'],
+      File["${sourceDir}/build"]
+    ],
+    notify  => [Exec['make_mesos']]
+  })
 
-  if !defined(Exec['bootstrap_mesos']) {
-    exec { 'bootstrap_mesos':
-      path    => [$::path, $sourceDir],
-      cwd     => $sourceDir,
-      timeout => 0,
-      command => 'bootstrap',
-      creates => $lockFile,
-      require => [
-        File[$sourceDir],
-      ],
-      notify  => [File["${sourceDir}/build"]]
-    }
-  }
+  ensure_resource('exec', 'make_mesos', {
+    path    => [$::path],
+    cwd     => "${sourceDir}/build",
+    timeout => 0,
+    command => "make -j${::processorcount}",
+    require => [Exec['configure_mesos']],
+    notify  => [Exec['make_install_mesos']]
+  })
 
-  if !defined(File["${sourceDir}/build"]) {
-    file { "${sourceDir}/build":
-      ensure  => directory,
-      recurse => true,
-      purge   => $force_install,
-      owner   => $user,
-      mode    => 'u=rwxs,o=r',
-      require => [
-        Exec['bootstrap_mesos']
-      ]
-    }
-  }
+  ensure_resource('exec', 'make_install_mesos', {
+    path    => [$::path],
+    cwd     => "${sourceDir}/build",
+    timeout => 0,
+    creates => $lockFile,
+    command => "make -j${::processorcount} install",
+    require => [Exec['make_mesos']],
+    notify  => [File["/tmp/installed-mesos-${branch}.lock"]]
+  })
 
-  if !defined(Exec['configure_mesos']) {
-    exec { 'configure_mesos':
-      path    => [$::path, "${sourceDir}/build"],
-      cwd     => "${sourceDir}/build",
-      timeout => 0,
-      command => "../configure ${mesosConfigParams}",
-      creates => $lockFile,
-      require => [
-        Exec['make_libnl3_install'],
-        File["${sourceDir}/build"]
-      ],
-      notify  => [Exec['make_mesos']]
-    }
-  }
-
-
-  if !defined(Exec['make_mesos']) {
-    exec { 'make_mesos':
-      path    => [$::path],
-      cwd     => "${sourceDir}/build",
-      timeout => 0,
-      command => "make -j${::processorcount}",
-      require => [Exec['configure_mesos']],
-      notify  => [Exec['make_install_mesos']]
-    }
-  }
-
-  if !defined(Exec['make_install_mesos']) {
-    exec { 'make_install_mesos':
-      path    => [$::path],
-      cwd     => "${sourceDir}/build",
-      timeout => 0,
-      creates => $lockFile,
-      command => "make -j${::processorcount} install",
-      require => [Exec['make_mesos']],
-      notify  => [File["/tmp/installed-mesos-${branch}.lock"]]
-    }
-  }
-
-  if !defined(File["/tmp/installed-mesos-${branch}.lock"]) {
-    file { "/tmp/installed-mesos-${branch}.lock":
-      ensure  => file,
-      content => $branch,
-      owner   => $user,
-      mode    => 'u=rwxs,o=r',
-      require => $requirements
-    }
-  }
+  ensure_resource('file', "/tmp/installed-mesos-${branch}.lock", {
+    ensure  => file,
+    content => $branch,
+    owner   => $user,
+    mode    => 'u=rwxs,o=r',
+    require => $requirements
+  })
 }
