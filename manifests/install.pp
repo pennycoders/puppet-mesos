@@ -218,7 +218,7 @@ class mesos::install(
     if $installDocker == true {
       ensure_resource('class','docker',{
         dns          => $dockerDNS,
-        socket_bind  => "unix:///${dockerSocketBind}",
+        socket_bind  => "unix://${dockerSocketBind}",
         docker_users => [$user],
         socket_group => $user
       })
