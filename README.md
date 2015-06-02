@@ -124,12 +124,13 @@ class mesos(
   $slaveOptions         = hiera('mesosSlaveConfig',{ }),
   # Whether to install docker or not
   $installDocker        = true,
-  # The desired docker version
-  $dockerVersion        = 'latest',
-  # The default docker dns server
-  $dockerDNS            = '8.8.8.8',
-  # Docker bind socket
-  $dockerSocketBind     = '/var/run/docker.sock',
+  # The options which will be passed to the main docker class
+  $dockerOptions        = hiera('classes::docker::options',{
+    dns          => '8.8.8.8',
+    socket_bind  => "unix:///var/run/docker.sock",
+    docker_users => [$user],
+    socket_group => $user
+  }),
   # Whether or not to manage the firewall rules - Please note that by default, this module replaces firewalld with iptables
   $manage_firewall      = false,
   # Whether we the module should attempt to install Mesos forcefully.
@@ -167,8 +168,6 @@ class mesos::install(
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
   $dockerVersion     = $mesos::dockerVersion,
-  $dockerDNS         = $mesos::dockerDNS,
-  $dockerSocketBind  = $mesos::dockerSocketBind,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) inherits mesos{
@@ -203,8 +202,6 @@ define mesos::resources::master(
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
   $dockerVersion     = $mesos::dockerVersion,
-  $dockerDNS         = $mesos::dockerDNS,
-  $dockerSocketBind  = $mesos::dockerSocketBind,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) {
@@ -240,8 +237,6 @@ define mesos::resources::master(
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
   $dockerVersion     = $mesos::dockerVersion,
-  $dockerDNS         = $mesos::dockerDNS,
-  $dockerSocketBind  = $mesos::dockerSocketBind,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) {
