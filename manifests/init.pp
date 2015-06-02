@@ -41,9 +41,12 @@ class mesos(
   $masterOptions        = hiera('mesosMasterConfig',{ }),
   $slaveOptions         = hiera('mesosSlaveConfig',{ }),
   $installDocker        = true,
-  $dockerVersion        = 'latest',
-  $dockerDNS            = '8.8.8.8',
-  $dockerSocketBind     = '/var/run/docker.sock',
+  $dockerOptions        = hiera('classes::docker::options',{
+    dns          => '8.8.8.8',
+    socket_bind  => "unix:///var/run/docker.sock",
+    docker_users => [$user],
+    socket_group => $user
+  }),
   $manage_firewall      = false,
   $force_install        = false
 ) {

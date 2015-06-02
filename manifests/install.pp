@@ -33,8 +33,8 @@ class mesos::install(
   $force_install     = $mesos::force_install
 ) inherits mesos{
 
-  validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$dockerVersion,$dockerDNS,$mesosConfigParams)
-  validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir,$dockerSocketBind)
+  validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$mesosConfigParams)
+  validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir)
   validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation, $force_install)
   validate_hash($masterOptions,$slaveOptions)
 
@@ -220,12 +220,7 @@ class mesos::install(
     }
 
     if $installDocker == true {
-      ensure_resource('class','docker',{
-        dns          => $dockerDNS,
-        socket_bind  => "unix://${dockerSocketBind}",
-        docker_users => [$user],
-        socket_group => $user
-      })
+      ensure_resource('class','docker',$dockerOptions)
     }
   }
 
