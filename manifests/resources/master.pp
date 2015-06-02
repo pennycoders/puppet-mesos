@@ -26,15 +26,13 @@ define mesos::resources::master(
   $masterOptions     = $mesos::masterOptions,
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
-  $dockerVersion     = $mesos::dockerVersion,
-  $dockerDNS         = $mesos::dockerDNS,
-  $dockerSocketBind  = $mesos::dockerSocketBind,
+  $dockerOptions     = $mesos::dockerOptions,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) {
 
-  validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$dockerVersion,$dockerDNS,$mesosConfigParams)
-  validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir,$dockerSocketBind)
+  validate_string($url,$mvn_url,$libnlUrl,$libnlConfigParams,$branch,$java_package,$masterServiceName,$slaveServiceName,$mesosConfigParams)
+  validate_absolute_path($sourceDir, $masterLogDir,$masterWorkDir,$slaveLogDir,$slaveWorkDir, $libnlSrcDir)
   validate_bool($manage_user,$install_deps,$install_master,$install_slave,$installDocker, $manage_firewall, $network_isolation, $force_install)
   validate_hash($masterOptions,$slaveOptions)
 

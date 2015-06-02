@@ -26,9 +26,7 @@ class mesos::install(
   $masterOptions     = $mesos::masterOptions,
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
-  $dockerVersion     = $mesos::dockerVersion,
-  $dockerDNS         = $mesos::dockerDNS,
-  $dockerSocketBind  = $mesos::dockerSocketBind,
+  $dockerOptions     = $mesos::dockerOptions,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) inherits mesos{
