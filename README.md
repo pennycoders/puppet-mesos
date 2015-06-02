@@ -124,7 +124,7 @@ class mesos(
   $slaveOptions         = hiera('mesosSlaveConfig',{ }),
   # Whether to install docker or not
   $installDocker        = true,
-  # The options which will be passed to the main docker class
+  # Docker options (for more details read https://github.com/garethr/garethr-docker)
   $dockerOptions        = hiera('classes::docker::options',{
     dns          => '8.8.8.8',
     socket_bind  => "unix:///var/run/docker.sock",
