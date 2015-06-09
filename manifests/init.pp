@@ -43,7 +43,7 @@ class mesos(
   $installDocker        = true,
   $dockerOptions        = hiera('classes::docker::options',{
     dns          => '8.8.8.8',
-    socket_bind  => "unix:///var/run/docker.sock",
+    socket_bind  => 'unix:///var/run/docker.sock',
     docker_users => [$user],
     socket_group => $user
   }),
