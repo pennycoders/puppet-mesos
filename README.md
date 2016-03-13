@@ -95,6 +95,7 @@ class mesos(
   # The owner of all the module-related files/resources/services
   $user                 = 'mesos',
   # Whether to install all the dependencies or not
+  $user                 = 'root',
   $install_deps         = true,
   # The jdk package name
   $java_package         = 'java-1.8.0-openjdk',
@@ -127,7 +128,7 @@ class mesos(
   # Docker options (for more details read https://github.com/garethr/garethr-docker)
   $dockerOptions        = hiera('classes::docker::options',{
     dns          => '8.8.8.8',
-    socket_bind  => "unix:///var/run/docker.sock",
+    socket_bind  => 'unix:///var/run/docker.sock',
     docker_users => [$user],
     socket_group => $user
   }),
@@ -167,7 +168,7 @@ class mesos::install(
   $masterOptions     = $mesos::masterOptions,
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
-  $dockerVersion     = $mesos::dockerVersion,
+  $dockerOptions     = $mesos::dockerOptions,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) inherits mesos{
@@ -201,7 +202,7 @@ define mesos::resources::master(
   $masterOptions     = $mesos::masterOptions,
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
-  $dockerVersion     = $mesos::dockerVersion,
+  $dockerOptions     = $mesos::dockerOptions,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) {
@@ -209,7 +210,7 @@ define mesos::resources::master(
 
 * The __mesos::resource::slave__ _resource_ and the default parameters
 ```puppet
-define mesos::resources::master(
+define mesos::resources::slave(
   $ensure            = $mesos::ensure,
   $url               = $mesos::url,
   $mvn_url           = $mesos::mvn_url,
@@ -236,7 +237,7 @@ define mesos::resources::master(
   $masterOptions     = $mesos::masterOptions,
   $slaveOptions      = $mesos::slaveOptions,
   $installDocker     = $mesos::installDocker,
-  $dockerVersion     = $mesos::dockerVersion,
+  $dockerOptions     = $mesos::dockerOptions,
   $manage_firewall   = $mesos::manage_firewall,
   $force_install     = $mesos::force_install
 ) {
