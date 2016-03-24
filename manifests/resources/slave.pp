@@ -1,4 +1,4 @@
-# mesos::slave::master resource
+# mesos::resources::slave resource
 define mesos::resources::slave(
   $ensure            = $mesos::ensure,
   $url               = $mesos::url,
